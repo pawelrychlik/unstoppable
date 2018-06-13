@@ -17,6 +17,11 @@ class App extends Component {
       //   { date: '2018-06-06', bike: "3", run: "10", workout: "" },
       // ],
       data: [],
+      totals: {
+        bike: 0,
+        run: 0,
+        workout: 0,
+      }
     };
   }
 
@@ -31,9 +36,33 @@ class App extends Component {
 
   componentWillMount() {
     this.loadSheet()
-      .then(data => {
-        // console.log(data);
-        this.setState({ data });
+      .then(rawData => {
+        // console.log(rawData);
+
+        const data = rawData.map(day => ({
+          date: day.date,
+          bike: Number(day.bike || 0),
+          run: Number(day.run || 0),
+          workout: Number(day.workout || 0),
+        }))
+        // filter out the days with no activity
+        .filter(day => (day.bike + day.run + day.workout > 0))
+        // calculate the "day score"
+        .map(day => ({
+          ...day,
+          // units: bike [km], run [km], workout [h]
+          // weights: 25km by bike is my equivalent of a 5km run or a 1h workout
+          score: day.bike + day.run * 5 + day.workout * 25,
+        }));
+
+        const totals = data.reduce((total, day) => {
+          total.bike += day.bike;
+          total.run += day.run;
+          total.workout += day.workout;
+          return total;
+        }, { bike: 0, run: 0, workout: 0 });
+
+        this.setState({ data, totals });
       })
       .catch(e => console.error(e));
   }
@@ -41,14 +70,10 @@ class App extends Component {
   classForValue(day) {
     if (!day) return 'color-empty';
 
-    // units: bike [km], run [km], workout [h]
-    // weights: 25km by bike is my equivalent of a 5km run or a 1h workout
-    const dayScore = Number(day.bike || 0) + Number(day.run || 0) * 5 + Number(day.workout || 0) * 25;
-
-    if (dayScore === 0) return 'color-empty';
-    if (dayScore < 10) return 'color-github-1';
-    if (dayScore < 25) return 'color-github-2';
-    if (dayScore < 50) return 'color-github-3';
+    if (day.score === 0) return 'color-empty';
+    if (day.score < 10) return 'color-github-1';
+    if (day.score < 25) return 'color-github-2';
+    if (day.score < 50) return 'color-github-3';
     return 'color-github-4';
   }
 
@@ -66,6 +91,10 @@ class App extends Component {
             values={this.state.data}
             classForValue={this.classForValue}
           />
+          <p>
+            Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
+            and {this.state.totals.workout} hours &#x1F3CB; this year.
+          </p>
         </div>
       </div>
     );
