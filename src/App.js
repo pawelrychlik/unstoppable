@@ -12,7 +12,7 @@ class App extends Component {
     super(props);
     this.state = {
       // data: [  // example data
-      //   { date: '2018-06-01', bike: "25", run: "0", workout: "0.75" },
+      //   { date: '2018-06-01', bike: "25", run: "0", workout: "60" },
       //   { date: '2018-06-03', bike: "48", run: "0", workout: "" },
       //   { date: '2018-06-06', bike: "3", run: "10", workout: "" },
       // ],
@@ -54,9 +54,9 @@ class App extends Component {
         // calculate the "day score"
         .map(day => ({
           ...day,
-          // units: bike [km], run [km], workout [h]
-          // weights: 25km by bike is my equivalent of a 5km run or a 1h workout
-          score: day.bike + day.run * 5 + day.workout * 25,
+          // units: bike [km], run [km], workout [min]
+          // weights: 5km by bike is my equivalent of a 1km run or a 10min workout
+          score: day.bike + day.run * 5 + day.workout * 0.5,
         }));
 
         const totals = data.reduce((total, day) => {
