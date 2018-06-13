@@ -18,8 +18,10 @@
   font-size: 1.5em;
 }
 
-.App-intro {
-  font-size: large;
+.HeatmapContainer {
+  max-width: 728px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @keyframes App-logo-spin {
