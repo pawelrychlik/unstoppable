@@ -81,6 +81,11 @@ class App extends Component {
     return 'color-github-4';
   }
 
+  onDayClick(value) {
+    if (!value) return;
+    alert(`Date: ${value.date}\n\nBike: ${value.bike} km\nRun: ${value.run} km\nWorkout: ${value.workout} min`);
+  }
+
   render() {
     return (
       <div className="App">
@@ -94,6 +99,7 @@ class App extends Component {
             endDate={new Date('2018-12-31')}
             values={this.state.data}
             classForValue={this.classForValue}
+            onClick={this.onDayClick}
           />
           <p>
             Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
