@@ -30,7 +30,10 @@ class App extends Component {
     return new Promise((resolve) => {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1CK1dlXslA7_wRth0SYvTf4wY2xgzk2gKGD1uw6SVyKg/edit?usp=sharing';
 
-      Tabletop.init({ key: sheetUrl, callback: resolve, simpleSheet: true });
+      const callback = (sheets) => {
+        resolve(sheets['2018'].elements);
+      };
+      Tabletop.init({ key: sheetUrl, callback, wanted: ['2018'] });
     });
   }
 
@@ -38,6 +41,7 @@ class App extends Component {
     this.loadSheet()
       .then(rawData => {
         // console.log(rawData);
+        // debugger;
 
         const data = rawData.map(day => ({
           date: day.date,
