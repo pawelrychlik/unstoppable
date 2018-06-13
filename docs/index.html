@@ -1,0 +1,24 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+    <title>hello world</title> 
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+    <script type='text/javascript'>
+      var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1CK1dlXslA7_wRth0SYvTf4wY2xgzk2gKGD1uw6SVyKg/edit?usp=sharing';
+
+      function init() {
+        Tabletop.init({ key: publicSpreadsheetUrl, callback: showInfo, simpleSheet: true });
+      }
+
+      function showInfo(data, tabletop) {
+        alert('Successfully processed!');
+        console.log(data);
+      }
+
+      window.addEventListener('DOMContentLoaded', init);
+    </script>
+  </head> 
+  <body> 
+    <h1>hello world</h1>
+  </body>
+</html>
