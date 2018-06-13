@@ -1,7 +1,7 @@
 {
   "name": "unstoppable",
   "version": "1.0.0",
-  "description": "",
+  "description": "unstoppable activity tracker",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
