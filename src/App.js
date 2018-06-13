@@ -97,7 +97,7 @@ class App extends Component {
           />
           <p>
             Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
-            and {this.state.totals.workout} hours &#x1F3CB; this year.
+            and {Math.floor(this.state.totals.workout / 60)} hours &#x1F3CB; this year.
           </p>
         </div>
       </div>
