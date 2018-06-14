@@ -100,6 +100,7 @@ class App extends Component {
             values={this.state.data}
             classForValue={this.classForValue}
             onClick={this.onDayClick}
+            showWeekdayLabels
           />
           <p>
             Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
