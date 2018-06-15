@@ -19,11 +19,11 @@ class App extends Component {
       data: [],
       filteredData: [],
       totals: {
-        bike: 0,
-        run: 0,
-        workout: 0,
+        bike: 0, // km
+        run: 0, // km
+        workout: 0, //mins
       },
-      filters: 'all',
+      filter: 'all',
     };
   }
 
@@ -52,14 +52,7 @@ class App extends Component {
           workout: Number(day.workout || 0),
         }))
         // filter out the days with no activity
-        .filter(day => (day.bike + day.run + day.workout > 0))
-        // calculate the "day score"
-        .map(day => ({
-          ...day,
-          // units: bike [km], run [km], workout [min]
-          // weights: 5km by bike is my equivalent of a 1km run or a 10min workout
-          score: day.bike + day.run * 5 + day.workout * 0.5,
-        }));
+        .filter(day => (day.bike + day.run + day.workout > 0));
 
         const totals = data.reduce((total, day) => {
           total.bike += day.bike;
@@ -69,6 +62,8 @@ class App extends Component {
         }, { bike: 0, run: 0, workout: 0 });
 
         this.setState({ data, totals });
+
+        this.applyFilters('all');
       })
       .catch(e => console.error(e));
   }
@@ -89,7 +84,24 @@ class App extends Component {
   }
 
   onFilter = (e) => {
-    this.setState({ filters: e.currentTarget.value });
+    const filter = e.currentTarget.value;
+    this.setState({ filter });
+
+    this.applyFilters(filter);
+  }
+
+  applyFilters(filter) {
+    // weights: 5km by bike is my equivalent of a 1km run or a 10min workout
+    const bikeWeight = ['all', 'bike'].includes(filter) ? 1 : 0;
+    const runWeight = ['all', 'run'].includes(filter) ? 5 : 0;
+    const workoutWeight = ['all', 'workout'].includes(filter) ? 0.5 : 0;
+
+    // calculate the "day score"
+    const filteredData = this.state.data.map(day => ({
+      ...day,
+      score: day.bike * bikeWeight + day.run * runWeight + day.workout * workoutWeight,
+    }));
+    this.setState({ filteredData });
   }
 
   render() {
@@ -100,25 +112,39 @@ class App extends Component {
           <h1 className="App-title">Unstoppable.</h1>
         </header>
         <div className="HeatmapContainer">
-          <CalendarHeatmap
-            startDate={new Date('2018-01-01')}
-            endDate={new Date('2018-12-31')}
-            values={this.state.data}
-            classForValue={this.classForValue}
-            onClick={this.onDayClick}
-            showWeekdayLabels
-          />
-          <div className="Filters">
-            Filter by: {this.state.filters} 
-            <div><input type="radio" value="all" checked={this.state.filters === 'all'} onChange={this.onFilter} /> &#x1F30D;</div>
-            <div><input type="radio" value="bike" checked={this.state.filters === 'bike'} onChange={this.onFilter} /> &#x1F6B4;</div>
-            <div><input type="radio" value="run" checked={this.state.filters === 'run'} onChange={this.onFilter} /> &#x1F3C3;</div>
-            <div><input type="radio" value="workout" checked={this.state.filters === 'workout'} onChange={this.onFilter} /> &#x1F3CB;</div>
+          <div className="Heatmap">
+            <CalendarHeatmap
+              startDate={new Date('2018-01-01')}
+              endDate={new Date('2018-12-31')}
+              values={this.state.filteredData}
+              classForValue={this.classForValue}
+              onClick={this.onDayClick}
+              showWeekdayLabels
+            />
           </div>
-          <p>
-            Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
-            and {Math.floor(this.state.totals.workout / 60)} hours &#x1F3CB; this year.
-          </p>
+          <div className="Filters">
+            <div>
+              <input type="radio" value="all" checked={this.state.filter === 'all'} onChange={this.onFilter} />
+              <span role="img" aria-label="all"> &#x1F30D;</span>
+            </div>
+            <div>
+              <input type="radio" value="bike" checked={this.state.filter === 'bike'} onChange={this.onFilter} />
+              <span role="img" aria-label="bike"> &#x1F6B4;</span>
+            </div>
+            <div>
+              <input type="radio" value="run" checked={this.state.filter === 'run'} onChange={this.onFilter} />
+              <span role="img" aria-label="run"> &#x1F3C3;</span>
+            </div>
+            <div>
+              <input type="radio" value="workout" checked={this.state.filter === 'workout'} onChange={this.onFilter} />
+              <span role="img" aria-label="workout"> &#x1F3CB;</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="Totals">
+          Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km by &#x1F3C3;
+          and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.
         </div>
       </div>
     );

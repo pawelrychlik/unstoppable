@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
+  animation: App-logo-spin infinite 10s linear;
   height: 100px;
 }
 
@@ -19,8 +19,24 @@
 }
 
 .HeatmapContainer {
-  max-width: 728px;
+  display: flex;
+  max-width: 778px;
   margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.Heatmap {
+  width: 728px;
+}
+.Filters {
+  margin-top: 6px;
+  flex-grow: 1;
+  max-width: 50px;
+  min-width: 50px;
+}
+
+.Totals {
   margin-left: auto;
   margin-right: auto;
 }
