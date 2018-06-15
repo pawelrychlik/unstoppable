@@ -17,11 +17,13 @@ class App extends Component {
       //   { date: '2018-06-06', bike: "3", run: "10", workout: "" },
       // ],
       data: [],
+      filteredData: [],
       totals: {
         bike: 0,
         run: 0,
         workout: 0,
-      }
+      },
+      filters: 'all',
     };
   }
 
@@ -86,6 +88,10 @@ class App extends Component {
     alert(`Date: ${value.date}\n\nBike: ${value.bike} km\nRun: ${value.run} km\nWorkout: ${value.workout} min`);
   }
 
+  onFilter = (e) => {
+    this.setState({ filters: e.currentTarget.value });
+  }
+
   render() {
     return (
       <div className="App">
@@ -102,6 +108,13 @@ class App extends Component {
             onClick={this.onDayClick}
             showWeekdayLabels
           />
+          <div className="Filters">
+            Filter by: {this.state.filters} 
+            <div><input type="radio" value="all" checked={this.state.filters === 'all'} onChange={this.onFilter} /> &#x1F30D;</div>
+            <div><input type="radio" value="bike" checked={this.state.filters === 'bike'} onChange={this.onFilter} /> &#x1F6B4;</div>
+            <div><input type="radio" value="run" checked={this.state.filters === 'run'} onChange={this.onFilter} /> &#x1F3C3;</div>
+            <div><input type="radio" value="workout" checked={this.state.filters === 'workout'} onChange={this.onFilter} /> &#x1F3CB;</div>
+          </div>
           <p>
             Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km &#x1F3C3;
             and {Math.floor(this.state.totals.workout / 60)} hours &#x1F3CB; this year.
