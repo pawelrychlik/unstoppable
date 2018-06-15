@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import Tabletop from 'tabletop';
+import ReactTooltip from 'react-tooltip'
 
 import logo from './logo.svg';
 import './App.css';
@@ -78,11 +79,6 @@ class App extends Component {
     return 'color-github-4';
   }
 
-  onDayClick(value) {
-    if (!value) return;
-    alert(`Date: ${value.date}\n\nBike: ${value.bike} km\nRun: ${value.run} km\nWorkout: ${value.workout} min`);
-  }
-
   onFilter = (e) => {
     const filter = e.currentTarget.value;
     this.setState({ filter });
@@ -102,9 +98,21 @@ class App extends Component {
       score: day.bike * bikeWeight + day.run * runWeight + day.workout * workoutWeight,
     }));
     this.setState({ filteredData });
+
+    ReactTooltip.rebuild();
   }
 
   render() {
+    const customTooltipDataAttrs = (value) => {
+      if (!value || !value.date) return;
+
+      const lines = [ value.date ];
+      value.bike && lines.push(`${value.bike} km by bike`);
+      value.run && lines.push(`${value.run} km ran`);
+      value.workout && lines.push(`${value.workout} min of workout`);
+
+      return { 'data-tip': lines.join('<br />') };
+    };
     return (
       <div className="App">
         <header className="App-header">
@@ -118,8 +126,8 @@ class App extends Component {
               endDate={new Date('2018-12-31')}
               values={this.state.filteredData}
               classForValue={this.classForValue}
-              onClick={this.onDayClick}
               showWeekdayLabels
+              tooltipDataAttrs={customTooltipDataAttrs}
             />
           </div>
           <div className="Filters">
@@ -146,6 +154,8 @@ class App extends Component {
           Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km by &#x1F3C3;
           and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.
         </div>
+
+        <ReactTooltip effect="solid" multiline />
       </div>
     );
   }
