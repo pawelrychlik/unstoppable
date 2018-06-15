@@ -128,6 +128,7 @@ class App extends Component {
               classForValue={this.classForValue}
               showWeekdayLabels
               tooltipDataAttrs={customTooltipDataAttrs}
+              weekdayLabels={['', 'Mo', '', 'We', '', 'Fri', '']}
             />
           </div>
           <div className="Filters">
