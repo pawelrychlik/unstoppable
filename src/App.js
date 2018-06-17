@@ -108,23 +108,6 @@ class App extends Component {
       .catch(e => console.error(e));
   }
 
-  classForValue(day) {
-    if (!day) return 'color-empty';
-
-    if (day.score === 0) return 'color-empty';
-    if (day.score < 10) return 'color-github-1';
-    if (day.score < 25) return 'color-github-2';
-    if (day.score < 50) return 'color-github-3';
-    return 'color-github-4';
-  }
-
-  onFilter = (e) => {
-    const filter = e.currentTarget.value;
-    this.setState({ filter });
-
-    this.applyFilters(filter);
-  }
-
   applyFilters(filter) {
     // weights: 5km by bike is my equivalent of a 1km run or a 10min workout
     const bikeWeight = ['all', 'bike'].includes(filter) ? 1 : 0;
@@ -139,6 +122,23 @@ class App extends Component {
     this.setState({ filteredData });
 
     ReactTooltip.rebuild();
+  }
+
+  onFilter = (e) => {
+    const filter = e.currentTarget.value;
+    this.setState({ filter });
+
+    this.applyFilters(filter);
+  }
+
+  classForValue(day) {
+    if (!day) return 'color-empty';
+
+    if (day.score === 0) return 'color-empty';
+    if (day.score < 10) return 'color-github-1';
+    if (day.score < 25) return 'color-github-2';
+    if (day.score < 50) return 'color-github-3';
+    return 'color-github-4';
   }
 
   render() {
