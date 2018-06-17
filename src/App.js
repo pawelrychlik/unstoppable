@@ -25,6 +25,7 @@ class App extends Component {
         workout: 0, //mins
       },
       filter: 'all',
+      longestStreak: { start: '', length: 0 },
     };
   }
 
@@ -46,6 +47,7 @@ class App extends Component {
         // console.log(rawData);
         // debugger;
 
+        // normalize the data
         const data = rawData.map(day => ({
           date: day.date,
           bike: Number(day.bike || 0),
@@ -55,6 +57,7 @@ class App extends Component {
         // filter out the days with no activity
         .filter(day => (day.bike + day.run + day.workout > 0));
 
+        // calculate yearly totals
         const totals = data.reduce((total, day) => {
           total.bike += day.bike;
           total.run += day.run;
@@ -62,7 +65,26 @@ class App extends Component {
           return total;
         }, { bike: 0, run: 0, workout: 0 });
 
-        this.setState({ data, totals });
+        // find the longest streak of activity
+        const streaks = data.reduce((acc, curr) => {
+          if (!acc.start) {
+            return { start: curr.date, length: 1, longest: { start: curr.date, length: 1 } };
+          }
+          const diff = (new Date(curr.date) - new Date(acc.start)) / (1000 * 60 * 60 * 24);
+          if (diff === acc.length) { // streak continues
+            acc.length++;
+          } else { // streak interrupted
+            if (acc.length > acc.longest.length) {
+              acc.longest = { start: acc.start, length: acc.length };
+            }
+            acc.start = curr.date;
+            acc.length = 1;
+          }
+          return acc;
+        }, {});
+        const longestStreak = (streaks.length > streaks.longest.length) ? streaks : streaks.longest;
+
+        this.setState({ data, totals, longestStreak });
 
         this.applyFilters('all');
       })
@@ -153,7 +175,8 @@ class App extends Component {
 
         <div className="Totals">
           Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km by &#x1F3C3;
-          and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.
+          and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.<br/>
+          Longest streak of activity is {this.state.longestStreak.length} days.
         </div>
 
         <ReactTooltip effect="solid" multiline />
