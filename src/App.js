@@ -25,7 +25,7 @@ class App extends Component {
         workout: 0, //mins
       },
       filter: 'all',
-      longestStreak: { start: '', length: 0 },
+      streaks: { current: { start: '', length: 0 }, longest: { start: '', length: 0 } },
     };
   }
 
@@ -83,8 +83,9 @@ class App extends Component {
           return acc;
         }, {});
         const longestStreak = (streaks.length > streaks.longest.length) ? streaks : streaks.longest;
+        const currentStreak = (new Date() - new Date(streaks.start)) / (1000 * 60 * 60 * 24) <= streaks.length + 1 ? streaks : { length: 0 };
 
-        this.setState({ data, totals, longestStreak });
+        this.setState({ data, totals, longestStreak, streaks: { longest: longestStreak, current: currentStreak } });
 
         this.applyFilters('all');
       })
@@ -176,7 +177,7 @@ class App extends Component {
         <div className="Totals">
           Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km by &#x1F3C3;
           and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.<br/>
-          Longest streak of activity is {this.state.longestStreak.length} days.
+          Current streak of activity is {this.state.streaks.current.length} days. Longest is {this.state.streaks.longest.length} days.
         </div>
 
         <ReactTooltip effect="solid" multiline />
