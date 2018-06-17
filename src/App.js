@@ -41,51 +41,67 @@ class App extends Component {
     });
   }
 
+  normalize(rawData) {
+    return rawData.map(day => ({
+      date: day.date,
+      bike: Number(day.bike || 0),
+      run: Number(day.run || 0),
+      workout: Number(day.workout || 0),
+    }))
+    // filter out the days with no activity
+    .filter(day => (day.bike + day.run + day.workout > 0));
+  }
+
+  calculateYearlyTotals(data) {
+    return data.reduce((total, day) => {
+      total.bike += day.bike;
+      total.run += day.run;
+      total.workout += day.workout;
+      return total;
+    }, { bike: 0, run: 0, workout: 0 });
+  }
+
+  calculateStreaksOfActivity(data) {
+    const dayDiff = (dateFrom, dateTo) => Math.abs(new Date(dateTo) - new Date(dateFrom)) / (1000 * 60 * 60 * 24);
+
+    // find the longest streak of activity
+    const streaks = data.reduce((acc, curr) => {
+      if (!acc.start) {
+        return { start: curr.date, length: 1, longest: { start: curr.date, length: 1 } };
+      }
+      if (dayDiff(acc.start, curr.date) === acc.length) { // streak continues
+        acc.length++;
+      } else { // streak interrupted
+        if (acc.length > acc.longest.length) {
+          acc.longest = { start: acc.start, length: acc.length };
+        }
+        acc.start = curr.date;
+        acc.length = 1;
+      }
+      return acc;
+    }, {});
+
+    // see if the current streak is the longest one
+    const longest = (streaks.length > streaks.longest.length)
+      ? { start: streaks.start, length: streaks.length }
+      : streaks.longest;
+
+    const current = dayDiff(streaks.start, new Date()) <= streaks.length + 1
+      ? { start: streaks.start, length: streaks.length }
+      : { length: 0 };
+
+    return { longest, current };
+  }
   componentWillMount() {
     this.loadSheet()
       .then(rawData => {
         // console.log(rawData);
         // debugger;
 
-        // normalize the data
-        const data = rawData.map(day => ({
-          date: day.date,
-          bike: Number(day.bike || 0),
-          run: Number(day.run || 0),
-          workout: Number(day.workout || 0),
-        }))
-        // filter out the days with no activity
-        .filter(day => (day.bike + day.run + day.workout > 0));
-
-        // calculate yearly totals
-        const totals = data.reduce((total, day) => {
-          total.bike += day.bike;
-          total.run += day.run;
-          total.workout += day.workout;
-          return total;
-        }, { bike: 0, run: 0, workout: 0 });
-
-        // find the longest streak of activity
-        const streaks = data.reduce((acc, curr) => {
-          if (!acc.start) {
-            return { start: curr.date, length: 1, longest: { start: curr.date, length: 1 } };
-          }
-          const diff = (new Date(curr.date) - new Date(acc.start)) / (1000 * 60 * 60 * 24);
-          if (diff === acc.length) { // streak continues
-            acc.length++;
-          } else { // streak interrupted
-            if (acc.length > acc.longest.length) {
-              acc.longest = { start: acc.start, length: acc.length };
-            }
-            acc.start = curr.date;
-            acc.length = 1;
-          }
-          return acc;
-        }, {});
-        const longestStreak = (streaks.length > streaks.longest.length) ? streaks : streaks.longest;
-        const currentStreak = (new Date() - new Date(streaks.start)) / (1000 * 60 * 60 * 24) <= streaks.length + 1 ? streaks : { length: 0 };
-
-        this.setState({ data, totals, longestStreak, streaks: { longest: longestStreak, current: currentStreak } });
+        const data = this.normalize(rawData);
+        const totals = this.calculateYearlyTotals(data);
+        const streaks = this.calculateStreaksOfActivity(data);
+        this.setState({ data, totals, streaks });
 
         this.applyFilters('all');
       })
