@@ -13,7 +13,7 @@ class App extends Component {
     super(props);
     this.state = {
       // data: [  // example data
-      //   { date: '2018-06-01', bike: "25", run: "0", workout: "60" },
+      //   { date: '2018-06-01', bike: "25", run: "0", workout: "60", comments: "been there, done that" },
       //   { date: '2018-06-03', bike: "48", run: "0", workout: "" },
       //   { date: '2018-06-06', bike: "3", run: "10", workout: "" },
       // ],
@@ -47,6 +47,7 @@ class App extends Component {
       bike: Number(day.bike || 0),
       run: Number(day.run || 0),
       workout: Number(day.workout || 0),
+      comments: day.comments,
     }))
     // filter out the days with no activity
     .filter(day => (day.bike + day.run + day.workout > 0));
@@ -149,6 +150,7 @@ class App extends Component {
       value.bike && lines.push(`${value.bike} km by bike`);
       value.run && lines.push(`${value.run} km ran`);
       value.workout && lines.push(`${value.workout} min of workout`);
+      value.comments && lines.push(value.comments);
 
       return { 'data-tip': lines.join('<br />') };
     };
