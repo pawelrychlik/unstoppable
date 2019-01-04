@@ -11,7 +11,9 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
+      year: '2018',
       // data: [  // example data
       //   { date: '2018-06-01', bike: "25", run: "0", workout: "60", comments: "been there, done that" },
       //   { date: '2018-06-03', bike: "48", run: "0", workout: "" },
@@ -29,15 +31,15 @@ class App extends Component {
     };
   }
 
-  loadSheet() {
+  loadSheet(year) {
     // TODO error handling
     return new Promise((resolve) => {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/1CK1dlXslA7_wRth0SYvTf4wY2xgzk2gKGD1uw6SVyKg/edit?usp=sharing';
 
       const callback = (sheets) => {
-        resolve(sheets['2018'].elements);
+        resolve(sheets[year].elements);
       };
-      Tabletop.init({ key: sheetUrl, callback, wanted: ['2018'] });
+      Tabletop.init({ key: sheetUrl, callback, wanted: [year] });
     });
   }
 
@@ -93,8 +95,24 @@ class App extends Component {
 
     return { longest, current };
   }
+
   componentWillMount() {
-    this.loadSheet()
+    this.fetchData(this.state.year);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.year !== prevState.year) {
+      this.fetchData(this.state.year);
+    }
+    if (this.state.filter !== prevState.filter) {
+      this.setState(state => ({
+        filteredData: this.calculateFilteredData(state.data, state.filter)
+      }));
+    }
+  }
+
+  fetchData(year) {
+    this.loadSheet(year)
       .then(rawData => {
         // console.log(rawData);
         // debugger;
@@ -102,34 +120,26 @@ class App extends Component {
         const data = this.normalize(rawData);
         const totals = this.calculateYearlyTotals(data);
         const streaks = this.calculateStreaksOfActivity(data);
-        this.setState({ data, totals, streaks });
+        const filter = 'all';
+        const filteredData = this.calculateFilteredData(data, filter);
+        this.setState({ data, totals, streaks, filter, filteredData });
 
-        this.applyFilters('all');
+        ReactTooltip.rebuild();
       })
       .catch(e => console.error(e));
   }
 
-  applyFilters(filter) {
+  calculateFilteredData(data, filter) {
     // weights: 5km by bike is my equivalent of a 1km run or a 10min workout
     const bikeWeight = ['all', 'bike'].includes(filter) ? 1 : 0;
     const runWeight = ['all', 'run'].includes(filter) ? 5 : 0;
     const workoutWeight = ['all', 'workout'].includes(filter) ? 0.5 : 0;
 
     // calculate the "day score"
-    const filteredData = this.state.data.map(day => ({
+    return data.map(day => ({
       ...day,
       score: day.bike * bikeWeight + day.run * runWeight + day.workout * workoutWeight,
     }));
-    this.setState({ filteredData });
-
-    ReactTooltip.rebuild();
-  }
-
-  onFilter = (e) => {
-    const filter = e.currentTarget.value;
-    this.setState({ filter });
-
-    this.applyFilters(filter);
   }
 
   classForValue(day) {
@@ -163,8 +173,8 @@ class App extends Component {
         <div className="HeatmapContainer">
           <div className="Heatmap">
             <CalendarHeatmap
-              startDate={new Date('2018-01-01')}
-              endDate={new Date('2018-12-31')}
+              startDate={new Date(`${this.state.year}-01-01`)}
+              endDate={new Date(`${this.state.year}-12-31`)}
               values={this.state.filteredData}
               classForValue={this.classForValue}
               showWeekdayLabels
@@ -174,19 +184,31 @@ class App extends Component {
           </div>
           <div className="Filters">
             <div>
-              <input type="radio" value="all" checked={this.state.filter === 'all'} onChange={this.onFilter} />
+              <input type="radio" value="all"
+                checked={this.state.filter === 'all'}
+                onChange={() => this.setState({ filter: 'all' })}
+              />
               <span role="img" aria-label="all"> &#x1F30D;</span>
             </div>
             <div>
-              <input type="radio" value="bike" checked={this.state.filter === 'bike'} onChange={this.onFilter} />
+              <input type="radio" value="bike"
+                checked={this.state.filter === 'bike'}
+                onChange={() => this.setState({ filter: 'bike' })}
+              />
               <span role="img" aria-label="bike"> &#x1F6B4;</span>
             </div>
             <div>
-              <input type="radio" value="run" checked={this.state.filter === 'run'} onChange={this.onFilter} />
+              <input type="radio" value="run"
+                checked={this.state.filter === 'run'}
+                onChange={() => this.setState({ filter: 'run' })}
+              />
               <span role="img" aria-label="run"> &#x1F3C3;</span>
             </div>
             <div>
-              <input type="radio" value="workout" checked={this.state.filter === 'workout'} onChange={this.onFilter} />
+              <input type="radio" value="workout"
+                checked={this.state.filter === 'workout'}
+                onChange={() => this.setState({ filter: 'workout' })}
+              />
               <span role="img" aria-label="workout"> &#x1F3CB;</span>
             </div>
           </div>
