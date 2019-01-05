@@ -1,7 +1,14 @@
 {
-  "main.css": "static/css/main.1150615b.css",
-  "main.css.map": "static/css/main.1150615b.css.map",
-  "main.js": "static/js/main.271c45f5.js",
-  "main.js.map": "static/js/main.271c45f5.js.map",
-  "static/media/logo.svg": "static/media/logo.ff816526.svg"
+  "main.css": "/unstoppable/static/css/main.28d84d73.chunk.css",
+  "main.js": "/unstoppable/static/js/main.d6819905.chunk.js",
+  "main.js.map": "/unstoppable/static/js/main.d6819905.chunk.js.map",
+  "static/js/1.8a2e5493.chunk.js": "/unstoppable/static/js/1.8a2e5493.chunk.js",
+  "static/js/1.8a2e5493.chunk.js.map": "/unstoppable/static/js/1.8a2e5493.chunk.js.map",
+  "runtime~main.js": "/unstoppable/static/js/runtime~main.7c27c83e.js",
+  "runtime~main.js.map": "/unstoppable/static/js/runtime~main.7c27c83e.js.map",
+  "static/media/logo.svg": "/unstoppable/static/media/logo.ff816526.svg",
+  "static/css/main.28d84d73.chunk.css.map": "/unstoppable/static/css/main.28d84d73.chunk.css.map",
+  "index.html": "/unstoppable/index.html",
+  "precache-manifest.efdf0637db4fa3461de6085069aceed2.js": "/unstoppable/precache-manifest.efdf0637db4fa3461de6085069aceed2.js",
+  "service-worker.js": "/unstoppable/service-worker.js"
 }
