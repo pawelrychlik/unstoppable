@@ -13,7 +13,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      year: '2018',
+      year: '2019',
       // data: [  // example data
       //   { date: '2018-06-01', bike: "25", run: "0", workout: "60", comments: "been there, done that" },
       //   { date: '2018-06-03', bike: "48", run: "0", workout: "" },
@@ -184,28 +184,28 @@ class App extends Component {
           </div>
           <div className="Filters">
             <div>
-              <input type="radio" value="all"
+              <input type="radio"
                 checked={this.state.filter === 'all'}
                 onChange={() => this.setState({ filter: 'all' })}
               />
               <span role="img" aria-label="all"> &#x1F30D;</span>
             </div>
             <div>
-              <input type="radio" value="bike"
+              <input type="radio"
                 checked={this.state.filter === 'bike'}
                 onChange={() => this.setState({ filter: 'bike' })}
               />
               <span role="img" aria-label="bike"> &#x1F6B4;</span>
             </div>
             <div>
-              <input type="radio" value="run"
+              <input type="radio"
                 checked={this.state.filter === 'run'}
                 onChange={() => this.setState({ filter: 'run' })}
               />
               <span role="img" aria-label="run"> &#x1F3C3;</span>
             </div>
             <div>
-              <input type="radio" value="workout"
+              <input type="radio"
                 checked={this.state.filter === 'workout'}
                 onChange={() => this.setState({ filter: 'workout' })}
               />
@@ -218,6 +218,17 @@ class App extends Component {
           Total of {this.state.totals.bike} km by &#x1F6B4;, {this.state.totals.run} km by &#x1F3C3;
           and {Math.floor(this.state.totals.workout / 60)} hours of &#x1F3CB; this year.<br/>
           Current streak of activity is {this.state.streaks.current.length} days. Longest is {this.state.streaks.longest.length} days.
+        </div>
+
+        <div style={{ marginTop: '20px' }}>
+          <input type="radio"
+            checked={this.state.year === '2018'}
+            onChange={() => this.setState({ year: '2018' })}
+          /> 2018
+          <input type="radio"
+            checked={this.state.year === '2019'}
+            onChange={() => this.setState({ year: '2019' })}
+          /> 2019
         </div>
 
         <ReactTooltip effect="solid" multiline />
