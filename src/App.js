@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import Tabletop from 'tabletop';
 import ReactTooltip from 'react-tooltip'
+import moment from 'moment';
 
 import logo from './logo.svg';
 import './App.css';
@@ -26,6 +27,7 @@ class App extends Component {
         run: 0, // km
         workout: 0, //mins
       },
+      monthly: {},
       filter: 'all',
       streaks: { current: { start: '', length: 0 }, longest: { start: '', length: 0 } },
     };
@@ -96,6 +98,27 @@ class App extends Component {
     return { longest, current };
   }
 
+  calculateMonthlyTotals(data) {
+    const result = data
+      .reduce((acc, day) => {
+        const month = moment(day.date).format('MMMM');
+        (acc[month] = acc[month] || []).push(day);
+        return acc;
+      }, {});
+    // result is: { January: [{},{},{}], February: [{},...], ... }
+
+    return Object.entries(result).reduce((acc, [month, days]) => {
+      // reduce days in a month:
+      acc[month] = days.reduce((sum, day) => {
+        sum.bike += day.bike;
+        sum.run += day.run;
+        sum.workout += day.workout;
+        return sum;
+      }, { bike: 0, run: 0, workout: 0 });
+      return acc;
+    }, {});
+  }
+
   componentWillMount() {
     this.fetchData(this.state.year);
   }
@@ -120,9 +143,10 @@ class App extends Component {
         const data = this.normalize(rawData);
         const totals = this.calculateYearlyTotals(data);
         const streaks = this.calculateStreaksOfActivity(data);
+        const monthly = this.calculateMonthlyTotals(data);
         const filter = 'all';
         const filteredData = this.calculateFilteredData(data, filter);
-        this.setState({ data, totals, streaks, filter, filteredData });
+        this.setState({ data, totals, monthly, streaks, filter, filteredData });
 
         ReactTooltip.rebuild();
       })
@@ -220,7 +244,16 @@ class App extends Component {
           Current streak of activity is {this.state.streaks.current.length} days. Longest is {this.state.streaks.longest.length} days.
         </div>
 
-        <div style={{ marginTop: '20px' }}>
+        {
+          ['bike', 'run', 'workout'].includes(this.state.filter) &&
+          (<div className="mt">
+            {Object.entries(this.state.monthly).map(([month, totals]) => (
+              <div key={month}>{month}: {totals[this.state.filter]}</div>
+            ))}
+          </div>)
+        }
+
+        <div className="mt">
           <input type="radio"
             checked={this.state.year === '2018'}
             onChange={() => this.setState({ year: '2018' })}

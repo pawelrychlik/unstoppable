@@ -12,6 +12,7 @@
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "moment": "^2.24.0",
     "react": "^16.4.1",
     "react-calendar-heatmap": "^1.6.3",
     "react-dom": "^16.4.1",
