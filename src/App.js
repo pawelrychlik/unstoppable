@@ -14,7 +14,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      year: '2019',
+      year: '2020',
       // data: [  // example data
       //   { date: '2018-06-01', bike: "25", run: "0", workout: "60", comments: "been there, done that" },
       //   { date: '2018-06-03', bike: "48", run: "0", workout: "" },
@@ -262,6 +262,10 @@ class App extends Component {
             checked={this.state.year === '2019'}
             onChange={() => this.setState({ year: '2019' })}
           /> 2019
+          <input type="radio"
+            checked={this.state.year === '2020'}
+            onChange={() => this.setState({ year: '2020' })}
+          /> 2020
         </div>
 
         <ReactTooltip effect="solid" multiline />
