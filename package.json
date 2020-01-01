@@ -13,12 +13,12 @@
   },
   "dependencies": {
     "moment": "^2.24.0",
-    "react": "^16.4.1",
-    "react-calendar-heatmap": "^1.6.3",
-    "react-dom": "^16.4.1",
-    "react-scripts": "^3.0.1",
-    "react-tooltip": "^3.6.1",
-    "tabletop": "^1.5.2"
+    "react": "^16.12.0",
+    "react-calendar-heatmap": "^1.8.1",
+    "react-dom": "^16.12.0",
+    "react-scripts": "^3.3.0",
+    "react-tooltip": "^3.11.1",
+    "tabletop": "^1.6.2"
   },
   "devDependencies": {
     "gh-pages": "^1.2.0"
